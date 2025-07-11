@@ -412,7 +412,7 @@
 <header class="header">
     <h1 class="main-title">Desde el barro</h1>
     <p class="subtitle">El Arquitecto del Poder Real</p>
-    <img src="https://i.imgur.com/u1P0o9I.jpeg" alt="Logo" style="width: 100px; height: 100px; margin-bottom: 2rem;">
+    <img src="https://i.imgur.com/u1P0o9I.jpeg" alt="Logo" style="width: 500px; height: 500px; margin-bottom: 2rem;">
 </header>
     <!-- Cards Section -->
     <section class="cards-section">
@@ -548,9 +548,15 @@
             }
         }
 
-        // Join Community Function
+        // Join Community Function - Redirect to WhatsApp
         function joinCommunity() {
-            alert('¡Bienvenido a la Tribu! Pronto recibirás más información sobre cómo comenzar tu transformación.');
+            const phoneNumber = '51947919825'; // Número de Perú con código de país
+            const message = 'Hola, quiero unirme a la tribu "Desde el barro"';
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Abrir WhatsApp en una nueva ventana/pestaña
+            window.open(whatsappURL, '_blank');
         }
 
         // Smooth Scrolling
