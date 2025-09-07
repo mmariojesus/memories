@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrenamiento Fricción</title>
+    <meta name="theme-color" content="#1f2937">
+    <link rel="manifest" href="data:application/json,{%22name%22:%22Entrenamiento%20Fricción%22,%22short_name%22:%22Fricción%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23111827%22,%22theme_color%22:%22%231f2937%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ef4444'/%3E%3Ctext x='50' y='55' text-anchor='middle' font-size='30' fill='white' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #ef4444;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ef4444;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        
+        .daily-challenge {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid #ef4444;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .challenge-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ef4444;
+        }
+        
+        .level-badge {
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .challenge-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .challenge-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-complete {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-complete:hover {
+            background: #059669;
+        }
+        
+        .btn-skip {
+            background: #64748b;
+            color: white;
+        }
+        
+        .btn-skip:hover {
+            background: #475569;
+        }
+        
+        .btn-new {
+            background: #ef4444;
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .btn-new:hover {
+            background: #dc2626;
+        }
+        
+        .btn-download {
+            background: #10b981;
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .btn-download:hover {
+            background: #059669;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            transition: width 0.3s ease;
+        }
+        
+        .categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .category {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .category:hover {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .category.active {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+        }
+        
+        .category-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .category-name {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .history {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+        }
+        
+        .history h3 {
+            color: #ef4444;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-status {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .status-completed {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-skipped {
+            background: #64748b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 ENTRENAMIENTO FRICCIÓN</h1>
+            <p>Acción estratégica, sin ego descontrolado</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCompleted">0</div>
+                <div class="stat-label">Completados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="streak">0</div>
+                <div class="stat-label">Racha días</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        
+        <button class="btn btn-download" onclick="instalarApp()" style="display: none;">
+            📱 INSTALAR APP
+        </button>
+        
+        <button class="btn btn-new" onclick="generarDesafio()">
+            🎯 NUEVO DESAFÍO
+        </button>
+        
+        <div class="categories">
+            <div class="category active" data-category="rechazo">
+                <div class="category-icon">💥</div>
+                <div class="category-name">RECHAZO</div>
+            </div>
+            <div class="category" data-category="incertidumbre">
+                <div class="category-icon">🎲</div>
+                <div class="category-name">INCERTIDUMBRE</div>
+            </div>
+            <div class="category" data-category="social">
+                <div class="category-icon">👥</div>
+                <div class="category-name">SOCIAL</div>
+            </div>
+            <div class="category" data-category="competencia">
+                <div class="category-icon">🏆</div>
+                <div class="category-name">COMPETENCIA</div>
+            </div>
+        </div>
+        
+        <div class="daily-challenge" id="challengeCard" style="display: none;">
+            <div class="challenge-header">
+                <div class="challenge-title">DESAFÍO DEL DÍA</div>
+                <div class="level-badge" id="levelBadge">NIVEL 1</div>
+            </div>
+            <div class="challenge-text" id="challengeText"></div>
+            <div class="challenge-buttons">
+                <button class="btn btn-complete" onclick="completarDesafio()">
+                    ✅ HECHO
+                </button>
+                <button class="btn btn-skip" onclick="saltarDesafio()">
+                    ⏭️ SALTAR
+                </button>
+            </div>
+        </div>
+        
+        <div class="history">
+            <h3>📈 Historial Reciente</h3>
+            <div id="historyList">
+                <div style="text-align: center; color: #64748b; padding: 20px;">
+                    Completa tu primer desafío para ver el historial
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Clave para guardar los datos en el almacenamiento local del navegador
+        const STORAGE_KEY = 'frictionAppData';
+
+        // Variables globales
+        let deferredPrompt; // Para el evento de instalación de la PWA
+        let datosApp = {
+            totalCompletados: 0,
+            racha: 0,
+            nivel: 1,
+            desafioActual: null,
+            historial: [],
+            fechaUltimaComplecion: null,
+            categoriaSeleccionada: 'rechazo'
+        };
+        
+        const desafios = {
+            rechazo: [
+                {nivel: 1, texto: "Acércate a 1 persona desconocida y hazle un cumplido genuino. Observa la reacción sin expectativas."},
+                {nivel: 1, texto: "Pide algo imposible en una tienda ('¿puedo llevar esto gratis?'). Mantén la calma ante el 'no'."},
+                {nivel: 2, texto: "Invita a salir a alguien que apenas conoces, sin justificarte. Solo: '¿Te gustaría tomar un café conmigo?'"},
+                {nivel: 2, texto: "Da tu opinión impopular en un grupo de amigos. Provoca debate sin alterarte."},
+                {nivel: 3, texto: "Haz flirteo juguetón con 2 personas que conoces. Observa las reacciones sin sobreanalizar."},
+                {nivel: 3, texto: "Escribe 3 mensajes directos a personas que sabes que probablemente no respondan."},
+                {nivel: 4, texto: "Confiesa un miedo o error personal en un grupo. Practica la vulnerabilidad estratégica."},
+                {nivel: 5, texto: "Acércate a 3 personas atractivas en un día y diles algo directo sobre tu interés."}
+            ],
+            incertidumbre: [
+                {nivel: 1, texto: "Tira un dado para decidir qué hacer en los próximos 30 minutos. Ejecuta sin cuestionar."},
+                {nivel: 1, texto: "Ve a un lugar sin plan y habla con la primera persona que veas durante 2 minutos."},
+                {nivel: 2, texto: "Deja que alguien más decida algo importante de tu día. Observa tu ansiedad sin controlarla."},
+                {nivel: 2, texto: "Improvisa una historia o comentario en grupo, sin guion previo. Acepta la incertidumbre."},
+                {nivel: 3, texto: "Participa en una conversación donde tu posición es claramente impopular. No retrocedas."},
+                {nivel: 3, texto: "Envía 3 mensajes totalmente aleatorios a conocidos sin prever su reacción."},
+                {nivel: 4, texto: "Toma una decisión importante tirando una moneda. Mantén el resultado 24 horas."},
+                {nivel: 5, texto: "Planifica un día entero usando solo decisiones al azar. Acepta todo lo que venga."}
+            ],
+            social: [
+                {nivel: 1, texto: "Inicia 3 conversaciones con desconocidos en lugares públicos hoy."},
+                {nivel: 1, texto: "Haz una broma arriesgada en una reunión social. No te disculpes si no funciona."},
+                {nivel: 2, texto: "Organiza una actividad grupal donde seas el centro de atención por 10 minutos."},
+                {nivel: 2, texto: "Cuenta una historia personal incómoda en un grupo de 4+ personas."},
+                {nivel: 3, texto: "Lidera una conversación controversial en una cena o reunión social."},
+                {nivel: 3, texto: "Haz 5 cumplidos arriesgados a diferentes personas en grupo durante el día."},
+                {nivel: 4, texto: "Organiza un evento social donde invites a 10 personas y acepta que algunos digan no."},
+                {nivel: 5, texto: "Da un discurso improvisado de 5 minutos frente a un grupo sobre un tema que te da miedo."}
+            ],
+            competencia: [
+                {nivel: 1, texto: "En cualquier juego/deporte, toma la decisión más arriesgada posible. Acepta las burlas."},
+                {nivel: 1, texto: "Juega una partida usando una estrategia que probablemente te haga perder."},
+                {nivel: 2, texto: "Desafía a alguien mejor que tú en algo. Pierde con dignidad."},
+                {nivel: 2, texto: "En LoL/juegos online, juega 3 partidas ranked con estrategias ultra-agresivas."},
+                {nivel: 3, texto: "Compite en algo donde seas claramente el menos hábil. Mantén la compostura."},
+                {nivel: 3, texto: "Organiza una competencia donde tú definas reglas arriesgadas para ti mismo."},
+                {nivel: 4, texto: "Reta públicamente a alguien a una competencia donde tienes 30% de probabilidades de ganar."},
+                {nivel: 5, texto: "Participa en 3 competencias diferentes en un día, siendo vulnerable al fracaso público."}
+            ]
+        };
+        
+        // --- Persistencia de Datos ---
+
+        function cargarDatos() {
+            const datosGuardados = localStorage.getItem(STORAGE_KEY);
+            if (datosGuardados) {
+                try {
+                    // Se combinan los datos guardados con los por defecto para evitar errores si se añaden nuevas propiedades
+                    const datosParseados = JSON.parse(datosGuardados);
+                    datosApp = { ...datosApp, ...datosParseados };
+                    console.log('Datos cargados desde localStorage.');
+                } catch (error) {
+                    console.error('Error al parsear datos guardados. Se usarán valores por defecto.', error);
+                }
+            }
+            actualizarUI(); // Actualiza toda la interfaz con los datos cargados o por defecto
+        }
+        
+        function guardarDatos() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(datosApp));
+                console.log('Datos guardados en localStorage.');
+            } catch (error) {
+                console.error('No se pudieron guardar los datos:', error);
+            }
+        }
+        
+        // --- Funciones de Lógica Principal ---
+        
+        function generarDesafio() {
+            const categoria = datosApp.categoriaSeleccionada;
+            const desafiosDisponibles = desafios[categoria] || desafios.rechazo;
+            
+            // Filtra desafíos por un nivel cercano al del usuario para que sea retador pero no imposible
+            const desafiosNivel = desafiosDisponibles.filter(d => 
+                d.nivel <= datosApp.nivel + 1 && d.nivel >= Math.max(1, datosApp.nivel - 1)
+            );
+            
+            const desafioAleatorio = desafiosNivel[Math.floor(Math.random() * desafiosNivel.length)];
+            
+            datosApp.desafioActual = desafioAleatorio;
+            
+            document.getElementById('challengeText').textContent = desafioAleatorio.texto;
+            document.getElementById('levelBadge').textContent = `NIVEL ${desafioAleatorio.nivel}`;
+            document.getElementById('challengeCard').style.display = 'block';
+        }
+        
+        function completarDesafio() {
+            if (!datosApp.desafioActual) return;
+            
+            datosApp.totalCompletados++;
+            actualizarRacha();
+            actualizarNivel();
+            
+            agregarAlHistorial('completed');
+            
+            document.getElementById('challengeCard').style.display = 'none';
+            mostrarCelebracion('🔥 ¡DESAFÍO COMPLETADO! 🔥', '#10b981');
+            actualizarUI();
+            guardarDatos();
+        }
+        
+        function saltarDesafio() {
+            if (!datosApp.desafioActual) return;
+            
+            agregarAlHistorial('skipped');
+            document.getElementById('challengeCard').style.display = 'none';
+            actualizarUI();
+            guardarDatos();
+        }
+
+        function actualizarRacha() {
+            const hoy = new Date().toDateString();
+            const fechaAnterior = datosApp.fechaUltimaComplecion;
+
+            if (fechaAnterior === hoy) return; // Si ya completó uno hoy, la racha no aumenta más
+
+            const ayer = new Date();
+            ayer.setDate(ayer.getDate() - 1);
+
+            if (fechaAnterior === ayer.toDateString()) {
+                datosApp.racha++; // Si el último fue ayer, se incrementa la racha
+            } else {
+                datosApp.racha = 1; // Si no, se reinicia
+            }
+            
+            datosApp.fechaUltimaComplecion = hoy;
+        }
+
+        function actualizarNivel() {
+            const nuevoNivel = Math.floor(datosApp.totalCompletados / 5) + 1;
+            if (nuevoNivel > datosApp.nivel) {
+                datosApp.nivel = nuevoNivel;
+                mostrarCelebracion(`🎉 ¡SUBISTE AL NIVEL ${datosApp.nivel}! 🎉`, '#ef4444', 3000);
+            }
+        }
+
+        function agregarAlHistorial(estado) {
+            const item = {
+                desafio: datosApp.desafioActual.texto,
+                nivel: datosApp.desafioActual.nivel,
+                estado: estado,
+                fecha: new Date().toLocaleDateString(),
+                categoria: datosApp.categoriaSeleccionada
+            };
+            
+            datosApp.historial.unshift(item); // Añade al principio
+            
+            // Limita el historial a los 5 más recientes
+            if (datosApp.historial.length > 5) {
+                datosApp.historial = datosApp.historial.slice(0, 5);
+            }
+        }
+        
+        // --- Funciones de Actualización de la Interfaz (UI) ---
+
+        function actualizarUI() {
+            actualizarEstadisticas();
+            actualizarBarraProgreso();
+            actualizarHistorial();
+            actualizarCategoriaSeleccionada();
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('totalCompleted').textContent = datosApp.totalCompletados;
+            document.getElementById('streak').textContent = datosApp.racha;
+        }
+        
+        function actualizarBarraProgreso() {
+            // La barra muestra el progreso para subir de nivel (cada 5 desafíos completados)
+            const progreso = (datosApp.totalCompletados % 5) * 20;
+            document.getElementById('progressFill').style.width = progreso + '%';
+        }
+
+        function actualizarHistorial() {
+            const contenedor = document.getElementById('historyList');
+            
+            if (datosApp.historial.length === 0) {
+                contenedor.innerHTML = `<div style="text-align: center; color: #64748b; padding: 20px;">Completa tu primer desafío para ver el historial</div>`;
+                return;
+            }
+            
+            contenedor.innerHTML = datosApp.historial.map(item => `
+                <div class="history-item">
+                    <div>
+                        <div style="font-size: 12px; font-weight: bold;">${item.fecha}</div>
+                        <div style="font-size: 11px; color: #64748b;">
+                            Nivel ${item.nivel} • ${item.categoria.toUpperCase()}
+                        </div>
+                    </div>
+                    <div class="history-status ${item.estado === 'completed' ? 'status-completed' : 'status-skipped'}">
+                        ${item.estado === 'completed' ? 'HECHO' : 'SALTADO'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function actualizarCategoriaSeleccionada() {
+            document.querySelectorAll('.category').forEach(cat => {
+                cat.classList.toggle('active', cat.dataset.category === datosApp.categoriaSeleccionada);
+            });
+        }
+        
+        function mostrarCelebracion(mensaje, color, duracion = 2000) {
+            const notificacion = document.createElement('div');
+            notificacion.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: ${color}; color: white; padding: 20px 30px;
+                border-radius: 12px; font-weight: bold; z-index: 1000;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                text-align: center;
+            `;
+            notificacion.textContent = mensaje;
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                if (document.body.contains(notificacion)) {
+                    document.body.removeChild(notificacion);
+                }
+            }, duracion);
+        }
+
+        // --- Lógica PWA (Progressive Web App) ---
+
+        async function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('El usuario aceptó instalar la app.');
+                }
+                deferredPrompt = null;
+                document.querySelector('.btn-download').style.display = 'none';
+            } else {
+                alert('La instalación no está disponible en este momento. Puedes añadir la página a tu pantalla de inicio desde las opciones del navegador.');
+            }
+        }
+        
+        // --- Event Listeners ---
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarDatos();
+            
+            // Event listener para las categorías
+            document.querySelectorAll('.category').forEach(categoria => {
+                categoria.addEventListener('click', function() {
+                    datosApp.categoriaSeleccionada = this.dataset.category;
+                    actualizarCategoriaSeleccionada();
+                    guardarDatos();
+                });
+            });
+
+            // Service Worker para PWA (funcionalidad offline)
+            if ('serviceWorker' in navigator) {
+                const swContent = `
+                    const CACHE_NAME = 'friction-app-v1';
+                    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.add('/'))));
+                    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+                `;
+                const blob = new Blob([swContent], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(swUrl)
+                    .then(() => console.log('Service Worker registrado con éxito.'))
+                    .catch(error => console.log('Fallo en el registro del Service Worker:', error));
+            }
+        });
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); // Previene que el navegador muestre el banner por defecto
+            deferredPrompt = e; // Guarda el evento para usarlo después
+            document.querySelector('.btn-download').style.display = 'block'; // Muestra nuestro botón personalizado
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('App instalada exitosamente.');
+            document.querySelector('.btn-download').style.display = 'none';
+        });
+
+    </script>
+</body>
+</html>
